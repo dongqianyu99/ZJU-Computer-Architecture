@@ -115,8 +115,8 @@ module CtrlUnit(
     // 需要对 pc 做运算的
     assign ALUSrc_A = AUIPC | JAL | JALR;                         //to fill sth. in 
 
-    // 需要用到立即数的
-    assign ALUSrc_B = I_valid | L_valid | S_valid | JAL | JALR | AUIPC | LUI;                         //to fill sth. in 
+    // 需要用到立即数的(JAL 和 JALR 这里不用)
+    assign ALUSrc_B = I_valid | L_valid | S_valid | AUIPC | LUI;                         //to fill sth. in 
 
     parameter ALU_ADD  = 4'b0001;
     parameter ALU_SUB  = 4'b0010;
@@ -160,7 +160,7 @@ module CtrlUnit(
     parameter hazard_optype_ALU = 3'b001;
     parameter hazard_optype_LOAD = 3'b010;
     parameter hazard_optype_STORE = 3'b011;
-    assign hazard_optype = ({2{R_valid | I_valid | JAL | JALR | LUI | AUIPC }})
+    assign hazard_optype = ({2{R_valid | I_valid | JAL | JALR | LUI | AUIPC }} & hazard_optype_ALU)
                            | ({2{L_valid}} & hazard_optype_LOAD)
                            | ({2{S_valid}} & hazard_optype_STORE);                  //to fill sth. in 
 
