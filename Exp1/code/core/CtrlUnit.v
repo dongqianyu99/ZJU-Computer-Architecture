@@ -76,7 +76,7 @@ module CtrlUnit(
     wire AUIPC = opcode == 7'b0010111;                          //to fill sth. in 
 
     wire JAL  = opcode == 7'b1101111;                           //to fill sth. in 
-    assign JALR = opcode == 7'b1100111;                        //to fill sth. in 
+    assign JALR = opcode == (7'b1100111 && funct3_0);                        //to fill sth. in 
 
     wire R_valid = AND | OR | ADD | XOR | SLL | SRL | SRA | SUB | SLT | SLTU;
     wire I_valid = ANDI | ORI | ADDI | XORI | SLLI | SRLI | SRAI | SLTI | SLTIU;

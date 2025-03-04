@@ -17,7 +17,7 @@ module HazardDetectionUnit(
     // PC_EN_IF：IF阶段是否启用PC
     // reg_FD_EN, reg_DE_EN, reg_EM_EN, reg_MW_EN：是否启用寄存器
     // reg_FD_stall, reg_FD_flush, reg_DE_flush, reg_EM_flush：是否暂停或清空寄存器
-    // forward_ctrl_ls：是否启用旁路
+    // forward_ctrl_ls：load-store 旁路控制
     // forward_ctrl_A, forward_ctrl_B：旁路控制
 );
     //according to the diagram, design the Hazard Detection Unit
@@ -48,10 +48,9 @@ module HazardDetectionUnit(
     wire load_use_stall = (hazard_optype_EXE == hazard_optype_LOAD) 
                           && (hazard_optype_ID != hazard_optype_STORE) 
                           && (rd_EXE)
-                          && (rs1use_ID && rs1_ID == rd_EXE) || (rs2use_ID && rs2_ID == rd_EXE);
+                          && ((rs1use_ID && rs1_ID == rd_EXE) || (rs2use_ID && rs2_ID == rd_EXE));
     assign PC_EN_IF = ~load_use_stall; // load-use hazard 时，IF 阶段暂停
     assign reg_FD_stall = load_use_stall; // IF 与 ID 间的寄存器不更新
-    assign reg_FD_flush = load_use_stall; // IF 与 ID 间的寄存器 flush
     assign reg_DE_flush = load_use_stall; // ID 与 EX 间的寄存器 flush
 
     // 可以 foward 的情况: data hazard
@@ -96,13 +95,16 @@ module HazardDetectionUnit(
 
     // forwarding 控制，选择正确的旁路
     // rs*_forward_1 -> 01; rs*_forward_2 -> 10; rs*_forward_3 -> 11
-    assign forward_ctrl_A = {2{rs1_forward_1}} & 2'b01 |
-                            {2{rs1_forward_2}} & 2'b10 |
-                            {2{rs1_forward_3}} & 2'b11;
+    // assign forward_ctrl_A = {2{rs1_forward_1}} & 2'b01 |
+    //                         {2{rs1_forward_2}} & 2'b10 |
+    //                         {2{rs1_forward_3}} & 2'b11;
 
-    assign forward_ctrl_B = {2{rs2_forward_1}} & 2'b01 |
-                            {2{rs2_forward_2}} & 2'b10 |
-                            {2{rs2_forward_3}} & 2'b11;
+    // assign forward_ctrl_B = {2{rs2_forward_1}} & 2'b01 |
+    //                         {2{rs2_forward_2}} & 2'b10 |
+    //                         {2{rs2_forward_3}} & 2'b11;
+    // forward_1 的优先级高于 forward_2
+    assign forward_ctrl_A = rs1_forward_1 == 1 ? 2'b01 : rs1_forward_2 == 1 ? 2'b10 : rs1_forward_3 == 1 ? 2'b11 : 0;
+    assign forward_ctrl_B = rs2_forward_1 == 1 ? 2'b01 : rs2_forward_2 == 1 ? 2'b10 : rs2_forward_3 == 1 ? 2'b11 : 0;
 
     // Branch 预测错误
     assign reg_FD_flush = Branch_ID; // IF 与 ID 间的寄存器 flush
