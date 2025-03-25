@@ -34,6 +34,7 @@ module ExceptionUnit(
     reg[31:0] csr_wdata;
     reg csr_w;
     reg[31:0] mepc, mcause, mtval;
+    wire[31:0] mtvec, mepc_o;
     reg[1:0] csr_wsc;
     
 

@@ -71,10 +71,8 @@ module CSRRegs(
             CSR[9] <= mepc;
             CSR[10] <= mcause;
             CSR[11] <= mtval;
-            if (CSR[0][3] == 0) begin
-                CSR[0][7] <= CSR[0][3]; // MPIE = MIE
-                CSR[0][3] <= 0; // MIE = 0
-            end 
+            CSR[0][7] <= CSR[0][3]; // MPIE = MIE
+            CSR[0][3] <= 0; // MIE = 0
             CSR[0][12:11] <= 2'b11; // MPP (不考虑别的模式)
         end
         else if (is_mret) begin
