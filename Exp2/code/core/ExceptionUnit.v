@@ -33,7 +33,9 @@ module ExceptionUnit(
     reg[11:0] csr_raddr, csr_waddr;
     reg[31:0] csr_wdata;
     reg csr_w;
+    reg[31:0] mepc, mcause, mtval;
     reg[1:0] csr_wsc;
+    
 
     wire[31:0] mstatus;
 
@@ -67,24 +69,24 @@ module ExceptionUnit(
 
         // trap case
         if (trap) begin
-            reg_FD_flush_ <= 1;
-            reg_DE_flush_ <= 1;
-            reg_EM_flush_ <= 1;
-            reg_MW_flush_ <= 1;
-            RegWrite_cancel_ <= 1;
+            reg_FD_flush_ = 1;
+            reg_DE_flush_ = 1;
+            reg_EM_flush_ = 1;
+            reg_MW_flush_ = 1;
+            RegWrite_cancel_ = 1;
         end
         else begin
-            reg_FD_flush_ <= 0;
-            reg_DE_flush_ <= 0;
-            reg_EM_flush_ <= 0;
-            reg_MW_flush_ <= 0;
-            RegWrite_cancel_ <= 0;
+            reg_FD_flush_ = 0;
+            reg_DE_flush_ = 0;
+            reg_EM_flush_ = 0;
+            reg_MW_flush_ = 0;
+            RegWrite_cancel_ = 0;
         end
 
         // interrupt & exception
         if (interrupt & mstatus[3]) begin // forbid interruption when MIE = 0
             mepc <= epc_next;
-            mcause <= 32'h80000000;
+            mcause <= 32'h8000000B;
             mtval <= 0;
         end
         else if (illegal_inst) begin

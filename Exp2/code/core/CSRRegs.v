@@ -7,7 +7,7 @@ module CSRRegs(
     input csr_w, // 写入使能信号
     input[1:0] csr_wsc_mode, // 写入模式
     output[31:0] rdata, // 读取的数据
-    output[31:0] mstatus // mstatus 输出
+    output[31:0] mstatus, // mstatus 输出
 
     input is_trap,
     input is_mret,
