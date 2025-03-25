@@ -14,6 +14,7 @@ module CSRRegs(
     input [31: 0] mepc,
     input [31: 0] mcause,
     input [31: 0] mtval,
+    input [31: 0] mtvec,
     output [31: 0] mepc_o
 );
 

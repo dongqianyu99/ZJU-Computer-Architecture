@@ -38,13 +38,15 @@ module ExceptionUnit(
     wire[31:0] mstatus;
 
     CSRRegs csr(.clk(clk),.rst(rst),.csr_w(csr_w),.raddr(csr_raddr),.waddr(csr_waddr),
-        .wdata(csr_wdata),.rdata(csr_r_data_out),.mstatus(mstatus),.csr_wsc_mode(csr_wsc)
+        .wdata(csr_wdata),.rdata(csr_r_data_out),.mstatus(mstatus),.csr_wsc_mode(csr_wsc),
         .is_trap(trap),.is_mret(mret),.mepc(mepc),.mcause(mcause),.mtval(mtval),.mtvec(mtvec),.mepc_o(mepc_o));
 
     //According to the diagram, design the Exception Unit
 
     assign exception = illegal_inst | l_access_fault | s_access_fault | ecall_m;
-    assign trap = interrupt | exception;
+    assign trap = (mstatus[3] & interrupt) | exception;
+    reg reg_FD_flush_, reg_DE_flush_, reg_EM_flush_, reg_MW_flush_;
+    reg RegWrite_cancel_;
 
     always @ * begin
         //csr read/write concerning
@@ -65,18 +67,18 @@ module ExceptionUnit(
 
         // trap case
         if (trap) begin
-            reg_FD_flush <= 1;
-            reg_DE_flush <= 1;
-            reg_EM_flush <= 1;
-            reg_MW_flush <= 1;
-            RegWrite_cancel <= 1;
+            reg_FD_flush_ <= 1;
+            reg_DE_flush_ <= 1;
+            reg_EM_flush_ <= 1;
+            reg_MW_flush_ <= 1;
+            RegWrite_cancel_ <= 1;
         end
         else begin
-            reg_FD_flush <= 0;
-            reg_DE_flush <= 0;
-            reg_EM_flush <= 0;
-            reg_MW_flush <= 0;
-            RegWrite_cancel <= 0;
+            reg_FD_flush_ <= 0;
+            reg_DE_flush_ <= 0;
+            reg_EM_flush_ <= 0;
+            reg_MW_flush_ <= 0;
+            RegWrite_cancel_ <= 0;
         end
 
         // interrupt & exception
@@ -110,5 +112,14 @@ module ExceptionUnit(
             mcause <= 0;
             mtval <= 0;
         end
+    end
+
+assign PC_redirect = mret ? mepc_o : mtvec;
+assign redirect_mux = mret | trap;
+assign reg_FD_flush = reg_FD_flush_;
+assign reg_DE_flush = reg_DE_flush_;
+assign reg_EM_flush = reg_EM_flush_;
+assign reg_MW_flush = reg_MW_flush_;
+assign RegWrite_cancel = RegWrite_cancel_;
 
 endmodule
