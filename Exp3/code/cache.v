@@ -70,7 +70,7 @@ module cache (
                     addr[0] ? word1[31:24] : word1[23:16] :
                     addr[0] ? word1[15:8] :  word1[7:0]   ;
     assign byte2 = addr[1] ?
-                    addr[0] ? word1[31:24] : word1[23:16] :
+                    addr[0] ? word2[31:24] : word2[23:16] :
                     addr[0] ? word2[15:8] :  word2[7:0]   ;                //need to fill in
 
     assign recent1 = inner_recent[addr_element1];
@@ -157,7 +157,7 @@ module cache (
             end
             else if (hit2) begin
                 //need to fill in
-                inner_data[addr_word1] <= 
+                inner_data[addr_word2] <= 
                     u_b_h_w[1] ?        // word?
                         din
                     :
