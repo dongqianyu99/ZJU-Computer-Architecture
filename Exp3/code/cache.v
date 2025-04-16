@@ -65,13 +65,13 @@ module cache (
     assign word1 = inner_data[addr_word1];
     assign word2 = inner_data[addr_word2];                //need to fill in
     assign half_word1 = addr[1] ? word1[31:16] : word1[15:0];
-    assign half_word2 = addr[1] ? word1[31:16] : word1[15:0];           //need to fill in
+    assign half_word2 = addr[1] ? word2[31:16] : word2[15:0];           //need to fill in
     assign byte1 = addr[1] ?
                     addr[0] ? word1[31:24] : word1[23:16] :
                     addr[0] ? word1[15:8] :  word1[7:0]   ;
     assign byte2 = addr[1] ?
                     addr[0] ? word1[31:24] : word1[23:16] :
-                    addr[0] ? word1[15:8] :  word1[7:0]   ;                //need to fill in
+                    addr[0] ? word2[15:8] :  word2[7:0]   ;                //need to fill in
 
     assign recent1 = inner_recent[addr_element1];
     assign recent2 = inner_recent[addr_element2];              //need to fill in
@@ -89,7 +89,7 @@ module cache (
         // concerning to Lab4
         // similar to line 128
         valid <= recent1 ? valid2 : valid1;                  //need to fill in
-        dirty <= recnet1 ? dirty2 : dirty2;                  //need to fill in
+        dirty <= recent1 ? dirty2 : dirty1;                  //need to fill in
         tag <= recent1 ? tag2 : tag1;                    //need to fill in
         hit <= hit1 || hit2;                    //need to fill in
         
