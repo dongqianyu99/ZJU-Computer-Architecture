@@ -37,20 +37,20 @@ module cmu (
     wire [TAG_BITS-1:0] cache_tag;
 
     cache CACHE (
-        .clk(~clk),
-        .rst(rst),
-        .addr(cache_addr),
-        .load(cache_load),
-        .store(cache_store),
-        .edit(cache_edit),
-        .invalid(1'b0),
-        .u_b_h_w(cache_u_b_h_w),
-        .din(cache_din),
-        .hit(cache_hit),
-        .dout(cache_dout),
-        .valid(cache_valid),
-        .dirty(cache_dirty),
-        .tag(cache_tag)
+        .clk(~clk),                      // clock
+        .rst(rst),                       // reset 
+        .addr(cache_addr),               // address
+        .load(cache_load),               // read refreshes recent bit
+        .store(cache_store),             // set valid to 1 and reset dirty to 0
+        .edit(cache_edit),               // set dirty to 1
+        .invalid(1'b0),                  // reset valid to 0
+        .u_b_h_w(cache_u_b_h_w),         // select signed or not & data width
+        .din(cache_din),                 // data write in
+        .hit(cache_hit),                 // hit or not
+        .dout(cache_dout),               // data read out
+        .valid(cache_valid),             // valid bit
+        .dirty(cache_dirty),             // dirty bit
+        .tag(cache_tag)                  // tag bits
     );
 
     localparam
@@ -88,46 +88,46 @@ module cmu (
                 S_IDLE: begin
                     if (en_r || en_w) begin
                         if (cache_hit)
-                            next_state = ??;
+                            next_state = S_IDLE;
                         else if (cache_valid && cache_dirty)
-                            next_state = ??;
+                            next_state = S_PRE_BACK;
                         else
-                            next_state = ??;
+                            next_state = S_FILL;
                     end
                     next_word_count = 2'b00;
                 end
 
                 S_PRE_BACK: begin
-                    next_state = ??;
+                    next_state = S_BACK;
                     next_word_count = 2'b00;
                 end
 
                 S_BACK: begin
                     if (mem_ack_i && word_count == {ELEMENT_WORDS_WIDTH{1'b1}})    // 2'b11 in default case
-                        next_state = ??;
+                        next_state = S_FILL;
                     else
-                        next_state = ??;
+                        next_state = S_BACK;
 
                     if (mem_ack_i)
-                        next_word_count = ??;
+                        next_word_count = word_count + 2'b01;
                     else
                         next_word_count = word_count;
                 end
 
                 S_FILL: begin
                     if (mem_ack_i && word_count == {ELEMENT_WORDS_WIDTH{1'b1}})
-                        next_state = ??;
+                        next_state = S_WAIT;
                     else
-                        next_state = ??;
+                        next_state = S_FILL;
 
                     if (mem_ack_i)
-                        next_word_count = ??;
+                        next_word_count = word_count + 2'b01;
                     else
                         next_word_count = word_count;
                 end
 
                 S_WAIT: begin
-                    next_state = ??;
+                    next_state = S_IDLE;
                     next_word_count = 2'b00;
                 end
             endcase
@@ -189,6 +189,6 @@ module cmu (
     end
     assign mem_data_o = cache_dout;
 
-    assign stall = ??;
+    assign stall = (next_state != S_IDLE);
 
 endmodule
