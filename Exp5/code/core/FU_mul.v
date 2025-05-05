@@ -14,6 +14,7 @@ module FU_mul(
     end
 
     reg[31:0] A_reg, B_reg;
+    wire[63:0] mulres;
 
     //to fill sth.in
     always@(posedge clk) begin

@@ -63,7 +63,7 @@ module  RV32core(
         .write_sel(DatatoReg_ctrl),.reg_write(RegWrite_ctrl),.rd_ctrl(rd_ctrl));
 
     //to fill sth.in
-    ImmGen imm_gen(.ImmSel(Immsel_ctrl),
+    ImmGen imm_gen(.ImmSel(ImmSel_ctrl),
                    .inst_field(inst_ID),
                    .Imm_out(Imm_out_ID));
 
