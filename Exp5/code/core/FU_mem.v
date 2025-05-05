@@ -17,8 +17,24 @@ module FU_mem(
     reg mem_w_reg;
     reg[2:0] bhw_reg;
     reg[31:0] rs1_data_reg, rs2_data_reg, imm_reg;
+    reg[31:0] addr;
 
-    ...         //to fill sth.in
+    //to fill sth.in
+    always @(posedge clk) begin
+        if (EN & ~state) begin 
+            rs1_data_reg <= rs1_data;
+            rs2_data_reg <= rs2_data;
+            imm_reg <= imm;
+            mem_w_reg <= mem_w;
+            bhw_reg <= bhw;
+            addr <= rs1_data + imm; // 计算地址
+            state[1] <= 1;
+        end
+        else begin
+            state <= (state >> 1);
+        end
+    end
+
 
     RAM_B ram(.clka(clk),.addra(addr),.dina(rs2_data_reg),.wea(mem_w_reg),
         .douta(mem_data),.mem_u_b_h_w(bhw_reg));

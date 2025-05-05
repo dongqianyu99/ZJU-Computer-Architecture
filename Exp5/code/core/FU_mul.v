@@ -15,7 +15,16 @@ module FU_mul(
 
     reg[31:0] A_reg, B_reg;
 
-    ...         //to fill sth.in
+    //to fill sth.in
+    always@(posedge clk) begin
+        if(EN & state == 0) begin //state == 0
+            A_reg <= A;
+            B_reg <= B;
+            state[6] <= 1;
+        end
+        else 
+            state <= (state >> 1);
+    end
 
     multiplier mul(.CLK(clk),.A(A_reg),.B(B_reg),.P(mulres));
 
