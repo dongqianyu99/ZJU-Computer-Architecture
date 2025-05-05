@@ -21,9 +21,9 @@ module FU_ALU(
     //to fill sth.in
     always@(posedge clk) begin
         if(EN & ~state) begin // state == 0，表示 ALU 处于空闲状态
+            Control <= ALUControl;
             A <= ALUA;
             B <= ALUB;
-            Control <= ALUControl;
             state <= 1; // 赋值完成，计算结果马上同步给 res，finish 为 1 代表计算结束
         end
         else state <= 0;

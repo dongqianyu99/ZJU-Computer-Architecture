@@ -64,7 +64,7 @@ module  RV32core(
 
     //to fill sth.in
     ImmGen imm_gen(.ImmSel(Immsel_ctrl),
-                   .inst(inst_ID),
+                   .inst_field(inst_ID),
                    .Imm_out(Imm_out_ID));
 
     Regs register(.clk(debug_clk),.rst(rst),
@@ -74,7 +74,7 @@ module  RV32core(
         .Debug_addr(debug_addr[4:0]),.Debug_regs(debug_regs));
 
     //to fill sth.in
-    MUX2T1_32 mux_imm_ALU_ID_A(.IO(rs1_data_ID),
+    MUX2T1_32 mux_imm_ALU_ID_A(.I0(rs1_data_ID),
                                .I1(PC_ID),
                                .s(ALUSrcA_ctrl),
                                .o(ALUA_ID));            
